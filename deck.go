@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"os"
 	"strings"
+	"time"
 )
 
 type deck []string
@@ -18,7 +20,7 @@ func (d deck) print() {
 func newDeck() deck {
 	cards := deck{}
 
-	cardValues := []string{"Ace", "Two", "Three", "Four"}
+	cardValues := []string{"Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King"}
 	cardSuits := []string{"Spades", "Diamonds", "Clubs", "Hearts"}
 
 	for _, cv := range cardValues {
@@ -49,6 +51,16 @@ func toByte(d string) []byte {
 
 func (d deck) saveToFile(filename string) error {
 	return ioutil.WriteFile("./hanem.txt", toByte(d.toString()), 0644)
+}
+
+func (d deck) shuffle() {
+	source := rand.NewSource(time.Now().UnixNano())
+	r := rand.New(source)
+
+	for i := range d {
+		newPos := r.Intn(len(d) - 1)
+		d[i], d[newPos] = d[newPos], d[i]
+	}
 }
 
 func newDeckFromFile(filename string) deck {
